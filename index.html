@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMS Sign-Up</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+      background-color: #f2f2f2;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 1.5em;
+      border-radius: 10px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.3em;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.7em;
+      margin-bottom: 1em;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.7em;
+      background-color: green;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: darkgreen;
+    }
+
+    .message {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 1em;
+    }
+  </style>
+</head>
+<body>
+  <form id="signup-form">
+    <h2>Sign Up for SMS Credits</h2>
+
+    <label for="nationalId">National ID</label>
+    <input type="text" id="nationalId" name="nationalId" required />
+
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" required />
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required />
+
+    <label for="phone">Phone Number</label>
+    <input type="text" id="phone" name="phone" required />
+
+    <button type="submit">Sign Up</button>
+
+    <div class="message" id="message"></div>
+  </form>
+
+  <script>
+    const scriptURL = 'PASTE_YOUR_WEB_APP_URL_HERE';
+
+    document.getElementById("signup-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const messageDiv = document.getElementById("message");
+      messageDiv.textContent = "Submitting...";
+
+      const data = {
+        nationalId: document.getElementById("nationalId").value.trim(),
+        name: document.getElementById("name").value.trim(),
+        password: document.getElementById("password").value,
+        phone: document.getElementById("phone").value.trim()
+      };
+
+      fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(res => res.json())
+        .then(response => {
+          if (response.status === "success") {
+            messageDiv.textContent = "Registration successful!";
+          } else if (response.status === "exists") {
+            messageDiv.textContent = "National ID already registered.";
+          } else {
+            messageDiv.textContent = "Something went wrong.";
+          }
+        })
+        .catch(err => {
+          messageDiv.textContent = "Error: " + err.message;
+        });
+    });
+  </script>
+</body>
+</html>
